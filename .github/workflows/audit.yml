@@ -1,0 +1,47 @@
+name: Audit CI
+
+on: [push, pull_request]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt flake8
+
+      - name: Lint
+        run: flake8 . --max-line-length=120 --exclude=.git,__pycache__
+
+      - name: Diff module smoke test
+        run: |
+          python -c "
+          import json, pathlib, tempfile
+          from core.diff import diff_audits, format_diff_markdown
+
+          baseline = [{'control': 'CIS-5.1.1', 'status': 'FAIL', 'resource': 'default', 'container': '', 'detail': 'test'}]
+          current  = [
+              {'control': 'CIS-5.1.1', 'status': 'FAIL', 'resource': 'default', 'container': '', 'detail': 'test'},
+              {'control': 'CIS-5.5.3', 'status': 'FAIL', 'resource': 'ns/dep', 'container': 'app', 'detail': 'latest tag'},
+          ]
+          with tempfile.TemporaryDirectory() as d:
+              b = pathlib.Path(d) / 'baseline.json'
+              c = pathlib.Path(d) / 'current.json'
+              b.write_text(json.dumps({'findings': baseline}))
+              c.write_text(json.dumps({'findings': current}))
+              result = diff_audits(b, c)
+              assert result['trend'].startswith('WORSE'), f'Expected WORSE, got {result[\"trend\"]}'
+              assert len(result['new_failures']) == 1
+              md = format_diff_markdown(result)
+              assert 'Regressions' in md
+              print('Diff module tests passed.')
+          "
+
+      - name: Check audit.py imports
+        run: python -c "import ast; ast.parse(open('audit.py').read()); print('audit.py syntax OK')"
