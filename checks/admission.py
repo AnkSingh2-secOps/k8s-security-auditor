@@ -22,7 +22,7 @@ def run_admission_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
 
     crds = {crd.metadata.name for crd in ext_api.list_custom_resource_definition().items}
 
-    # ── OPA / Gatekeeper ─────────────────────────────────────────────────────
+    # OPA / Gatekeeper
     gatekeeper_crds = {
         "constrainttemplatepodstatuses.status.gatekeeper.sh",
         "constrainttemplates.templates.gatekeeper.sh",
@@ -48,7 +48,7 @@ def run_admission_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
             "detail":   "OPA/Gatekeeper not detected. Consider deploying a policy engine.",
         })
 
-    # ── Kyverno ───────────────────────────────────────────────────────────────
+    # Kyverno
     kyverno_crds = {
         "clusterpolicies.kyverno.io",
         "policies.kyverno.io",
@@ -66,7 +66,7 @@ def run_admission_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
             "detail":   f"Kyverno: {status}",
         })
 
-    # ── Native PodSecurity admission (PSA) ────────────────────────────────────
+    # Native PodSecurity admission (PSA)
     namespaces = core_v1.list_namespace().items
     psa_enforced = [
         ns.metadata.name

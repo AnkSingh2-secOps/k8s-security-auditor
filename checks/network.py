@@ -1,4 +1,4 @@
-"""checks/network.py – Network policy coverage checks."""
+"""checks/network.py - Network policy coverage checks."""
 
 from __future__ import annotations
 from checks.rbac import Finding
@@ -32,7 +32,7 @@ class NetworkPolicyChecker:
                     control_id  = "CIS-5.3.2",
                     title       = "Namespace has no NetworkPolicy",
                     status      = "FAIL",
-                    detail      = f"Namespace '{ns}' has no NetworkPolicy defined — all traffic is permitted.",
+                    detail      = f"Namespace '{ns}' has no NetworkPolicy defined, all traffic is permitted.",
                     remediation = "Define at least a default-deny NetworkPolicy and explicitly allow only required traffic.",
                     namespace   = ns,
                     tags        = ["network-policy", "network"],

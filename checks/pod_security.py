@@ -1,4 +1,4 @@
-"""checks/pod_security.py – CIS Kubernetes Benchmark: Pod security checks."""
+"""checks/pod_security.py - CIS Kubernetes Benchmark: Pod security checks."""
 
 from __future__ import annotations
 from checks.rbac import Finding

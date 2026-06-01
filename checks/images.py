@@ -19,7 +19,7 @@ def run_image_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
     apps_v1   = client.AppsV1Api(k8s_client)
     core_v1   = client.CoreV1Api(k8s_client)
 
-    # Allowed registries – empty set = allow all (permissive by default)
+    # Allowed registries - empty set = allow all (permissive by default)
     # Users can extend this list in their config.
     APPROVED_REGISTRIES: set[str] = set()
 
@@ -58,7 +58,7 @@ def run_image_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
             tag = image.split(":")[-1] if ":" in image else "latest"
             registry = image.split("/")[0] if "/" in image else "docker.io"
 
-            # CIS 5.5.3 – :latest tag
+            # CIS 5.5.3 - :latest tag
             if tag == "latest":
                 findings.append({
                     "control":     "CIS-5.5.3",
@@ -69,7 +69,7 @@ def run_image_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
                     "detail":      f"Image '{image}' uses :latest tag. Pin to a specific digest or version.",
                 })
 
-            # CIS 5.5.1 – imagePullPolicy for :latest
+            # CIS 5.5.1 - imagePullPolicy for :latest
             if tag == "latest" and pull_policy != "Always":
                 findings.append({
                     "control":     "CIS-5.5.1",
@@ -80,7 +80,7 @@ def run_image_checks(k8s_client: client.ApiClient) -> list[dict[str, Any]]:
                     "detail":      f"Image '{image}' uses :latest but imagePullPolicy is '{pull_policy}' (should be Always).",
                 })
 
-            # CIS 5.5.2 – approved registry
+            # CIS 5.5.2 - approved registry
             if APPROVED_REGISTRIES and not any(image.startswith(r) for r in APPROVED_REGISTRIES):
                 findings.append({
                     "control":     "CIS-5.5.2",

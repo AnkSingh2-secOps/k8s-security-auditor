@@ -1,4 +1,4 @@
-"""checks/rbac.py – CIS Kubernetes Benchmark: RBAC checks."""
+"""checks/rbac.py - CIS Kubernetes Benchmark: RBAC checks."""
 
 from __future__ import annotations
 from dataclasses import dataclass, field
@@ -31,13 +31,13 @@ class RBACChecker:
         rbac   = client.RbacAuthorizationV1Api()
         findings: list[Finding] = []
 
-        # 5.1.1 – cluster-admin bindings
+        # 5.1.1 - cluster-admin bindings
         findings += self._check_cluster_admin(rbac)
 
-        # 5.1.2 & 5.1.3 – wildcard / secrets access in ClusterRoles
+        # 5.1.2 & 5.1.3 - wildcard / secrets access in ClusterRoles
         findings += self._check_clusterrole_permissions(rbac)
 
-        # 5.1.6 – default service account bindings
+        # 5.1.6 - default service account bindings
         findings += self._check_default_sa_bindings(rbac, namespace)
 
         return findings

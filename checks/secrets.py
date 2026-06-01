@@ -1,4 +1,4 @@
-"""checks/secrets.py – Secrets and service account token checks."""
+"""checks/secrets.py - Secrets and service account token checks."""
 
 from __future__ import annotations
 from checks.rbac import Finding
